@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"      
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd 
+                           http://www.springframework.org/schema/rabbit        
+                           http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
+<!--se comenta porque ya esta configurado en el test-spring-config.xml-->    
+<!--<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"       
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd 
+                           http://www.springframework.org/schema/rabbit        
+                           http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+                            http://www.springframework.org/schema/context 
+                            http://www.springframework.org/schema/context/spring-context.xsd">-->
+    
+    <!--<context:component-scan base-package="com.anton.dev.tqrbs2.test" />-->
+
+    <rabbit:connection-factory id="connectionFactory" host="localhost"/>
+    <rabbit:admin connection-factory="connectionFactory"/>
+
+    <rabbit:template connection-factory="connectionFactory" id="rabbitTemplate" channel-transacted="true"/>
+    <rabbit:queue name="userMesssageQueue" />
+    
+    <rabbit:direct-exchange name="myExchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="userMesssageQueue" key="userMesssage" />
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+    <rabbit:listener-container connection-factory="connectionFactory">
+        <rabbit:listener ref="lis" queue-names="userMesssageQueue"/>
+    </rabbit:listener-container>
+
+    <bean id="transactionManager" class="org.springframework.amqp.rabbit.transaction.RabbitTransactionManager">
+        <property name="connectionFactory" ref="connectionFactory"/>
+    </bean>
+    <bean id="lis" class="com.anton.dev.tqrbs2.test.TestReceiver"/>
+</beans>    
