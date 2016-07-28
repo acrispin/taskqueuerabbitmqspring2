@@ -57,6 +57,6 @@ public class BasicJava {
         LOGGER.info("Enviando Java: " + msg);
         template.convertAndSend("myExchange2", "foo.bar", msg);
         Thread.sleep(1000);
-        container.stop();        
+        container.stop();
     }
 }
