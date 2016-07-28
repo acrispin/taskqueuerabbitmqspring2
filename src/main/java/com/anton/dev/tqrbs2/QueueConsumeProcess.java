@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -22,6 +24,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class QueueConsumeProcess implements MessageListener {
+    
+    private static final Logger LOGGER = LogManager.getLogger(QueueConsumeProcess.class);
 
     @Autowired
     private CachingConnectionFactory connectionFactory;
@@ -42,7 +46,7 @@ public class QueueConsumeProcess implements MessageListener {
 
     @Override
     public void onMessage(Message msg) {
-        System.out.println(new String(msg.getBody()));
+        LOGGER.info(new String(msg.getBody()));
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

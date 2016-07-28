@@ -10,6 +10,8 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TestSender {
+    
+    private static final Logger LOGGER = LogManager.getLogger(TestSender.class);
 
     @Autowired
     private RabbitTemplate template;
@@ -25,7 +29,7 @@ public class TestSender {
     public void sendMessage() {
         String msg = "mensaje de test en cola";
         final Message message = new Message(msg.getBytes(), new MessageProperties());
-        System.out.println("Enviando: " + msg);
+        LOGGER.info("Enviando: " + msg);
         // template.send("myExchange", "userMesssage", message);        
         template.convertAndSend("myExchange", "userMesssage", msg);
     }

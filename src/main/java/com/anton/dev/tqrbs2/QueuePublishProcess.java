@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -26,7 +28,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class QueuePublishProcess {
-
+    
+    private static final Logger LOGGER = LogManager.getLogger(QueuePublishProcess.class);
     public static final String QUEUE_NAME = "test.queue";
 
     @Autowired
@@ -51,7 +54,7 @@ public class QueuePublishProcess {
             Queue q = new Queue(queueName, durable, false, true);
             admin.declareQueue(q);
             BindingBuilder.bind(q).to(exchange).with(queueName);
-            System.out.println("Bounded queue " + queueName);
+            LOGGER.info("Bounded queue " + queueName);
         }
     }
 
@@ -64,7 +67,7 @@ public class QueuePublishProcess {
 
                 // write message
                 template.convertAndSend(queueName, sent);
-                System.out.println("Msg Sent to " + queueName + " :  " + sent);
+                LOGGER.info("Msg Sent to " + queueName + " :  " + sent);
                 Thread.sleep(1000);
             } catch (Exception e) {
                 e.printStackTrace();

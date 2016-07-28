@@ -14,6 +14,8 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -21,6 +23,8 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
  * https://projects.spring.io/spring-amqp/#quick-start
  */
 public class BasicJava {
+    
+    private static final Logger LOGGER = LogManager.getLogger(BasicJava.class);
 
     public static void main(String[] args) throws Exception {
         ConnectionFactory cf = new CachingConnectionFactory();
@@ -39,7 +43,7 @@ public class BasicJava {
                 = new SimpleMessageListenerContainer(cf);
         Object listener = new Object() {
             public void handleMessage(String foo) {
-                System.out.println("Recibiendo Java: " +foo);
+                LOGGER.info("Recibiendo Java: " +foo);
             }
         };
         MessageListenerAdapter adapter = new MessageListenerAdapter(listener);
@@ -50,7 +54,7 @@ public class BasicJava {
         // send something
         RabbitTemplate template = new RabbitTemplate(cf);
         String msg = "Hello, world Rabbit!";
-        System.out.println("Enviando Java: " + msg);
+        LOGGER.info("Enviando Java: " + msg);
         template.convertAndSend("myExchange2", "foo.bar", msg);
         Thread.sleep(1000);
         container.stop();        
